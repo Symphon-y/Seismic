@@ -1,0 +1,1 @@
+export type HorizontalBarDataColumnType = 'Percentage Part Of Whole' | 'Percentage Segment Against Total' | 'Count';
