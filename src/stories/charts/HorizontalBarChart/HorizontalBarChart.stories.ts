@@ -1,6 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import HorizontalBarChart from './HorizontalBarChart';
-import { HorizontalbarChartLongitudinalityMock, HorizontalBarChartMock } from './HorizontalBarchartMock';
+import {
+  HorizontalbarChartLongitudinalityMock,
+  HorizontalBarChartMock,
+} from './HorizontalBarchartMock';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -31,21 +34,21 @@ export const Primary: Story = {
     header: 'Range',
     columnTwo: true,
     columnTwoHeader: 'Percentage',
-    columnTwoDataType: 'Percentage Part Of Whole',
-    showValues: true
+    columnTwoDataType: 'PercentageOfTotal',
+    showValues: true,
   },
 };
 
 export const Longitudinality: Story = {
-    args: {
-      width: 500,
-      height: 300,
-      title: 'Longitudinality',
-      data: HorizontalbarChartLongitudinalityMock,
-      header: 'Range',
-      columnTwo: true,
-      columnTwoHeader: 'Percentage',
-      columnTwoDataType: 'Percentage Segment Against Total',
-      showValues: true
-    },
-  };
+  args: {
+    width: 500,
+    height: 300,
+    title: 'Longitudinality',
+    data: HorizontalbarChartLongitudinalityMock,
+    header: 'Range',
+    columnTwo: true,
+    columnTwoHeader: 'Percentage',
+    columnTwoDataType: 'PercentageOfMax',
+    showValues: true,
+  },
+};
