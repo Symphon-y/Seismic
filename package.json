@@ -1,7 +1,7 @@
 {
-  "name": "storybook",
+  "name": "Seismic",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,14 +10,17 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
+  "files": [
+  "stories/charts/"
+  ],
   "dependencies": {
     "@emotion/styled": "^11.13.0",
     "@visx/visx": "^3.11.0",
-    "next": "14.2.6",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "next": "14.2.6",
     "@chromatic-com/storybook": "^1.7.0",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",

@@ -1,0 +1,64 @@
+# Ignore Storybook files
+*.stories.js
+*.stories.jsx
+*.stories.ts
+*.stories.tsx
+*.mdx
+
+# Ignore Storybook config directory
+.storybook/
+
+# Ignore Storybook-static directory
+storybook-static/
+
+# Ignore storybook default assets
+stories/assets/
+
+# Ignore Docker Files
+Dockerfile
+docker-compose.yml
+dockerfile
+
+# Ignore build directories
+build/
+dist/
+out/
+
+# Ignore test-related files
+*.test.js
+*.test.jsx
+*.test.ts
+*.test.tsx
+coverage/
+
+# Ignore local environment settings
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env*.local
+
+# Ignore log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore node_modules if not in use
+node_modules/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Windows system files
+Thumbs.db
+
+# Ignore Next.js directories and files
+.next/
+*.next/
+next.config.js
+server.js
+src/app
+
+# Ignore public directory
+public/
