@@ -12,7 +12,7 @@
 storybook-static/
 
 # Ignore storybook default assets
-stories/assets/
+src/stories/assets/
 
 # Ignore Docker Files
 Dockerfile
