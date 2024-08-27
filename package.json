@@ -1,5 +1,5 @@
 {
-  "name": "@seismic/react",
+  "name": "@seizmic/react",
   "version": "0.1.0",
   "private": false,
   "scripts": {
@@ -43,7 +43,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Symphon-y/Seismic.git"
+    "url": "git+https://github.com/Symphon-y/Seizmic.git"
   },
   "keywords": [
     "react",
@@ -55,7 +55,7 @@
   "author": "Travis R. Redden",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Symphon-y/Seismic/issues"
+    "url": "https://github.com/Symphon-y/Seizmic/issues"
   },
-  "homepage": "https://github.com/Symphon-y/Seismic#readme"
+  "homepage": "https://github.com/Symphon-y/Seizmic#readme"
 }
