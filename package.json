@@ -1,6 +1,6 @@
 {
   "name": "@seizmic/react",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.13.0",
-    "@visx/visx": "^3.11.0",
+    "@visx/visx": "^3.11.0"
+  },
+  "peerDependencies": {
     "react": "^18",
     "react-dom": "^18"
   },

@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   AnimatedAreaSeries,
   AnimatedAxis,
@@ -19,7 +20,6 @@ const titleFontWeight = '500';
 const titleHeight = 2 * 16;
 const tickLabelOffset = 10;
 
-import React from 'react';
 import { AreaChartMock } from './AreaChartMock';
 import { Curve } from '@visx/visx';
 import { ChartValue, ChartValues } from '../ChartTypes';
