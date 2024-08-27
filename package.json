@@ -1,5 +1,5 @@
 {
-  "name": "Seismic",
+  "name": "@seismic/react",
   "version": "0.1.0",
   "private": false,
   "scripts": {
@@ -11,7 +11,7 @@
     "build-storybook": "storybook build"
   },
   "files": [
-  "stories/charts/"
+    "stories/charts/"
   ],
   "dependencies": {
     "@emotion/styled": "^11.13.0",
@@ -38,5 +38,24 @@
     "eslint-plugin-storybook": "^0.8.0",
     "storybook": "^8.2.9",
     "typescript": "^5"
-  }
+  },
+  "description": "open-source components built on top of emotion and visx for a (mostly) library agnostic approach to visualizations in react.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Symphon-y/Seismic.git"
+  },
+  "keywords": [
+    "react",
+    "charting",
+    "component",
+    "library",
+    "visualizations"
+  ],
+  "author": "Travis R. Redden",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Symphon-y/Seismic/issues"
+  },
+  "homepage": "https://github.com/Symphon-y/Seismic#readme"
 }
