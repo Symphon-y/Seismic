@@ -1,1 +1,1 @@
-export * from './charts';
+export * from './src/stories/charts';
