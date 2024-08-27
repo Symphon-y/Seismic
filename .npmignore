@@ -19,9 +19,8 @@ Dockerfile
 docker-compose.yml
 dockerfile
 
-# Ignore build directories
+# Ignore unwanted build directories
 build/
-dist/
 out/
 
 # Ignore test-related files

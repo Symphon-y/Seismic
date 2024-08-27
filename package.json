@@ -1,7 +1,9 @@
 {
   "name": "@seizmic/react",
   "version": "0.1.5",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
   "private": false,
   "files": [
     "src/stories/charts",
@@ -9,11 +11,12 @@
   ],
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "tsup",
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "prepublish": "tsc"
   },
   "dependencies": {
     "@emotion/styled": "^11.13.0",
@@ -22,7 +25,6 @@
     "react-dom": "^18"
   },
   "devDependencies": {
-    "next": "14.2.6",
     "@chromatic-com/storybook": "^1.7.0",
     "@storybook/addon-essentials": "^8.2.9",
     "@storybook/addon-interactions": "^8.2.9",
@@ -38,8 +40,10 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.6",
     "eslint-plugin-storybook": "^0.8.0",
+    "next": "14.2.6",
     "storybook": "^8.2.9",
-    "typescript": "^5"
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
   },
   "description": "open-source components built on top of emotion and visx for a (mostly) library agnostic approach to visualizations in react.",
   "repository": {
