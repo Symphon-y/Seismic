@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import HorizontalBarChart from './HorizontalBarChart';
+import { HorizontalBarChart } from './HorizontalBarChart';
 import {
   HorizontalbarChartLongitudinalityMock,
   HorizontalBarChartMock,

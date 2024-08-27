@@ -1,13 +1,14 @@
 {
   "name": "@seizmic/react",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
   "private": false,
   "files": [
-    "src/stories/charts",
-    "charts"
+    "dist",
+    "src",
+    "src/stories/"
   ],
   "scripts": {
     "dev": "next dev",
@@ -15,8 +16,7 @@
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "prepublish": "tsc"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/styled": "^11.13.0",

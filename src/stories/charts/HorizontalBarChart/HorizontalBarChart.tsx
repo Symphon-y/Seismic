@@ -21,7 +21,7 @@ const borderRadius = 4;
 const headerHeight = 32;
 const percentColumnWidth = 60;
 
-export type BarsProps = {
+type BarsProps = {
   width: number;
   height: number;
   title?: string;
@@ -42,7 +42,7 @@ const customPaper = {
   backgroundColor: '#fff',
 };
 
-const HorizontalBarChart = ({
+export const HorizontalBarChart = ({
   title = 'Website Analytics',
   width,
   height,
@@ -206,5 +206,3 @@ const HorizontalBarChart = ({
     </svg>
   );
 };
-
-export default HorizontalBarChart;
