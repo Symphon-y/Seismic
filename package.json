@@ -1,7 +1,12 @@
 {
   "name": "@seizmic/react",
   "version": "0.1.3",
+  "main": "index.js",
   "private": false,
+  "files": [
+    "src/stories/charts",
+    "charts"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,10 +15,6 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
-  "files": [
-    "src/stories/*",
-    "charts/*"
-  ],
   "dependencies": {
     "@emotion/styled": "^11.13.0",
     "@visx/visx": "^3.11.0",
@@ -41,7 +42,6 @@
     "typescript": "^5"
   },
   "description": "open-source components built on top of emotion and visx for a (mostly) library agnostic approach to visualizations in react.",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Symphon-y/Seizmic.git"
