@@ -2,9 +2,9 @@ import React, { useMemo } from 'react';
 import { Text } from '@visx/text';
 import { Group } from '@visx/group';
 import { scaleLinear } from '@visx/scale';
-import { ChartValue, ChartValues } from '../ChartTypes';
-import { HorizontalBarChartMock } from './HorizontalBarchartMock';
 import { HorizontalBarDataColumnType } from './HorizontalBarChartTypes';
+import { HorizontalBarChartMock } from './HorizontalBarChartMock';
+import { ChartValue, ChartValues } from '../ChartTypes';
 
 const font =
   'Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji';
@@ -21,7 +21,7 @@ const borderRadius = 4;
 const headerHeight = 32;
 const percentColumnWidth = 60;
 
-type BarsProps = {
+type HorizontalBarChartProps = {
   width: number;
   height: number;
   title?: string;
@@ -53,7 +53,7 @@ export const HorizontalBarChart = ({
   columnTwoHeader = 'Percentage',
   columnTwoDataType = 'PercentageOfTotal',
   showValues = false,
-}: BarsProps) => {
+}: HorizontalBarChartProps) => {
   // accessors
   const getLabel = (d: ChartValue) => d.Label;
   const getValue = (d: ChartValue) => Number(d.Value);

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import AreaChart from './AreaChart';
-import { AreaChartMock } from './AreaChartMock';
+import { AreaChart } from '../../../../charts/src/AreaChart/AreaChart';
+import { AreaChartMock } from '../../../../charts/src/AreaChart/AreaChartMock';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {

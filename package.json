@@ -1,6 +1,6 @@
 {
   "name": "@seizmic/react",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "tsup",
+    "t": "tsup",
     "start": "next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",

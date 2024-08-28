@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { HorizontalBarChart } from './HorizontalBarChart';
 import {
   HorizontalbarChartLongitudinalityMock,
   HorizontalBarChartMock,
-} from './HorizontalBarchartMock';
+} from '../../../../charts/src/HorizontalBarChart';
+import { HorizontalBarChart } from './../../../../charts/src/HorizontalBarChart/HorizontalBarChart';
+import type { Meta, StoryObj } from '@storybook/react';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {

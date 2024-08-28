@@ -1,0 +1,32 @@
+{
+  "name": "@seizmic/charts",
+  "version": "0.0.6",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "lint": "tsc",
+    "rollup": "rollup -c --bundleConfigAsCjs"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/react": "^18.3.4",
+    "react": "^18.3.1",
+    "rollup": "^4.21.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-ts": "^3.4.5",
+    "tslib": "^2.7.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-postcss": "^4.0.2",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@visx/visx": "^3.11.0"
+  },
+  "author": "",
+  "description": ""
+}

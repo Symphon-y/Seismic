@@ -9,7 +9,6 @@ import {
 } from '@visx/xychart';
 import { curveMonotoneX } from '@visx/curve';
 import { Text } from '@visx/text';
-import styled from '@emotion/styled';
 
 const font =
   'Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji';
@@ -24,7 +23,7 @@ import { AreaChartMock } from './AreaChartMock';
 import { Curve } from '@visx/visx';
 import { ChartValue, ChartValues } from '../ChartTypes';
 
-type BarsProps = {
+type AreaChartProps = {
   width?: number;
   height?: number;
   title?: string;
@@ -43,6 +42,46 @@ const customPaper = {
   backgroundColor: '#fff',
 };
 
+const chartContainerStyle = {
+  fontFamily: 'Untitled Sans, sans-serif',
+};
+
+const axisTickStyle = {
+  fontSize: '12px',
+  fontWeight: 400,
+  fill: '#666666',
+};
+
+const coloredSquareStyle = (color: string) => ({
+  display: 'inline-block',
+  width: '11px',
+  height: '11px',
+  marginRight: '8px',
+  background: color,
+  borderRadius: '4px',
+});
+
+const tooltipContainerStyle = {
+  padding: '8px 16px',
+  fontSize: '12px',
+  borderRadius: '4px',
+  color: '#222222',
+};
+
+const dateStyle = {
+  fontSize: '12px',
+  marginBottom: '8px',
+  color: '#222222',
+  fontWeight: 600,
+};
+
+const valueStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  fontWeight: 400,
+  color: '#000000',
+};
+
 export const AreaChart = ({
   title = 'Area Chart',
   data = AreaChartMock,
@@ -50,7 +89,7 @@ export const AreaChart = ({
   height = 300,
   curve = true,
   showLabels = false,
-}: BarsProps) => {
+}: AreaChartProps) => {
   // Data Accessors
   const accessors = {
     xAccessor: (d: ChartValue) => new Date(parseInt(d.Label), 0, 1), // Convert year string to Date
@@ -59,7 +98,7 @@ export const AreaChart = ({
 
   // Extract unique Y-values
   const uniqueYValues = [...new Set(data.map(accessors.yAccessor))];
-  console.log({ uniqueYValues });
+
   // Data Formatters
   const dateFormatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
@@ -68,9 +107,9 @@ export const AreaChart = ({
   const tooltipDateFormatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
   });
-  console.log({ data });
+
   return (
-    <ChartContainer style={{ ...customPaper, width, height }}>
+    <div style={{ ...customPaper, ...chartContainerStyle, width, height }}>
       <XYChart
         height={270}
         margin={{ left: 60, top: 35, bottom: 35, right: showLabels ? 50 : 35 }}
@@ -103,7 +142,6 @@ export const AreaChart = ({
         {/* Horizontal Grid Lines */}
         <AnimatedGrid
           columns={false}
-          // numTicks={4}
           numTicks={uniqueYValues.length}
           lineStyle={{
             stroke: 'rgba(29,29,29, .1)',
@@ -118,16 +156,10 @@ export const AreaChart = ({
           hideTicks
           orientation='bottom'
           numTicks={4}
-          // tickValues={uniqueYValues}
           tickFormat={(d) => dateFormatter.format(new Date(d))}
-          // tickFormat={(d) => format(d, `MMM yy`)}
           tickLabelProps={() => ({
             dy: tickLabelOffset,
-            style: {
-              fill: 'rgba(29,29,29, 0.5)',
-              fontFamily: font,
-              fontSize: fontSize,
-            },
+            style: axisTickStyle,
           })}
         />
         {/* Left Labels */}
@@ -138,11 +170,7 @@ export const AreaChart = ({
           numTicks={4}
           tickLabelProps={() => ({
             dx: -10,
-            style: {
-              fill: 'rgba(29,29,29, 0.5)',
-              fontFamily: font,
-              fontSize: fontSize,
-            },
+            style: axisTickStyle,
           })}
         />
 
@@ -195,7 +223,7 @@ export const AreaChart = ({
             }}
             renderTooltip={({ tooltipData }) => {
               return (
-                <TooltipContainer>
+                <div style={tooltipContainerStyle}>
                   {tooltipData &&
                     Object.entries(tooltipData.datumByKey).map(
                       (lineDataArray) => {
@@ -204,68 +232,25 @@ export const AreaChart = ({
 
                         return (
                           <div className='row' key={key}>
-                            <div className='date'>
+                            <div style={dateStyle}>
                               {tooltipDateFormatter.format(
                                 accessors.xAccessor(datum)
                               )}
                             </div>
-                            <div className='value'>
-                              <ColoredSquare color='#3b82f6' />
+                            <div style={valueStyle}>
+                              <div style={coloredSquareStyle('#3b82f6')} />
                               {accessors.yAccessor(datum)}
                             </div>
                           </div>
                         );
                       }
                     )}
-                </TooltipContainer>
+                </div>
               );
             }}
           />
         )}
       </XYChart>
-    </ChartContainer>
+    </div>
   );
 };
-
-const ChartContainer = styled.div`
-  text {
-    font-family: 'Untitled Sans', sans-serif;
-  }
-
-  .visx-axis-tick {
-    text {
-      font-size: 12px;
-      font-weight: 400;
-      fill: #666666;
-    }
-  }
-`;
-
-const ColoredSquare = styled.div`
-  display: inline-block;
-  width: 11px;
-  height: 11px;
-  margin-right: 8px;
-  background: ${({ color }) => color};
-  border-radius: 4px;
-`;
-
-const TooltipContainer = styled.div`
-  padding: 8px 16px;
-  font-size: 12px;
-  border-radius: 4px;
-  color: #222222;
-
-  .date {
-    font-size: 12px;
-    margin-bottom: 8px;
-    color: #222222;
-    font-weight: 600;
-  }
-  .value {
-    display: flex;
-    align-items: center;
-    font-weight: 400;
-    color: #000000;
-  }
-`;
