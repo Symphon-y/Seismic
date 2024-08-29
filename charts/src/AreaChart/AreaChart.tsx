@@ -22,7 +22,6 @@ const tickLabelOffset = 10;
 import { AreaChartMock } from './AreaChartMock';
 import { Curve } from '@visx/visx';
 import { ChartValue, ChartValues } from '../ChartTypes';
-import zIndex from '@mui/material/styles/zIndex';
 
 type AreaChartProps = {
   width?: number;
