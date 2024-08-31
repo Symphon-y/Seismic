@@ -19,7 +19,7 @@ const titleFontWeight = '500';
 const titleHeight = 2 * 16;
 const tickLabelOffset = 10;
 
-import { AreaChartMock } from './AreaChartMock';
+import { AreaChartMock_ISO8601 as AreaChartMock } from './AreaChartMock';
 import { Curve } from '@visx/visx';
 import { ChartValue, ChartValues } from '../ChartTypes';
 
@@ -93,7 +93,43 @@ export const AreaChart = ({
 }: AreaChartProps) => {
   // Data Accessors
   const accessors = {
-    xAccessor: (d: ChartValue) => new Date(parseInt(d.Label), 0, 1), // Convert year string to Date
+    xAccessor: (d: ChartValue) => {
+      const label = d.Label;
+
+      let result;
+
+      // Regex patterns to match different date formats
+      const yearPattern = /^\d{4}$/;
+      const yearMonthPattern = /^\d{4}-\d{2}$/;
+      const fullDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+      const iso8601Pattern =
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})?$/;
+
+      if (yearPattern.test(label)) {
+        // Handle year only, e.g., "2024"
+        result = new Date(parseInt(label), 0, 1);
+      } else if (yearMonthPattern.test(label)) {
+        // Handle year and month, e.g., "2024-08"
+        const [year, month] = label.split('-').map(Number);
+        result = new Date(year, month - 1, 1);
+      } else if (fullDatePattern.test(label)) {
+        // Handle full date, e.g., "2024-08-14"
+        result = new Date(label);
+      } else if (iso8601Pattern.test(label)) {
+        // Handle ISO 8601 datetime formats, e.g., "2024-08-14T06:35:24.069331+00:00"
+        result = new Date(label);
+      } else {
+        // Fallback: attempt to parse any other formats
+        result = new Date(label);
+      }
+
+      // Check if the parsed date is valid
+      if (isNaN(result.getTime())) {
+        throw new Error(`Invalid date format: ${label}`);
+      }
+
+      return result;
+    },
     yAccessor: (d: ChartValue) => d.Value,
   };
 
@@ -101,13 +137,36 @@ export const AreaChart = ({
   const uniqueYValues = [...new Set(data.map(accessors.yAccessor))];
 
   // Data Formatters
-  const dateFormatter = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-  });
 
-  const tooltipDateFormatter = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-  });
+  // Date Formatter for Chart Labels
+  const dateFormatter = (date: Date) => {
+    const options: {
+      year: 'numeric' | '2-digit' | undefined;
+      month?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' | undefined;
+      day?: 'numeric' | '2-digit' | undefined;
+    } = { year: 'numeric' };
+    if (date.getMonth() > 0) {
+      options.month = 'short';
+    }
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  };
+
+  // Tooltip Date Formatter for Detailed Information
+  const tooltipDateFormatter = (date: Date) => {
+    const options: {
+      year: 'numeric' | '2-digit' | undefined;
+      month?: 'numeric' | '2-digit' | 'long' | 'short' | 'narrow' | undefined;
+      day?: 'numeric' | '2-digit' | undefined;
+    } = {
+      year: 'numeric',
+      month: 'short',
+    };
+
+    if (date.getDate() > 1) {
+      options.day = 'numeric';
+    }
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  };
 
   return (
     <div style={{ ...customPaper, ...chartContainerStyle, width, height }}>
@@ -115,7 +174,11 @@ export const AreaChart = ({
         height={270}
         margin={{ left: 60, top: 35, bottom: 35, right: showLabels ? 50 : 35 }}
         xScale={{ type: 'time' }}
-        yScale={{ type: 'linear' }}>
+        yScale={{
+          type: 'linear',
+          nice: true,
+          zero: false,
+        }}>
         <Text
           x={24}
           y={titleHeight / 2}
@@ -157,7 +220,7 @@ export const AreaChart = ({
           hideTicks
           orientation='bottom'
           numTicks={4}
-          tickFormat={(d) => dateFormatter.format(new Date(d))}
+          tickFormat={(d) => dateFormatter(new Date(d))}
           tickLabelProps={() => ({
             dy: tickLabelOffset,
             style: axisTickStyle,
@@ -234,9 +297,7 @@ export const AreaChart = ({
                         return (
                           <div className='row' key={key}>
                             <div style={dateStyle}>
-                              {tooltipDateFormatter.format(
-                                accessors.xAccessor(datum)
-                              )}
+                              {tooltipDateFormatter(accessors.xAccessor(datum))}
                             </div>
                             <div style={valueStyle}>
                               <div style={coloredSquareStyle('#3b82f6')} />
