@@ -5,6 +5,22 @@ import { Group } from '@visx/group';
 import { animated, useTransition, interpolate } from '@react-spring/web';
 import { ChartValue } from '../ChartTypes';
 import { PieChartMock } from './PieChartMock';
+import { Text } from '@visx/text';
+
+const font =
+  'Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji';
+const fontSize = '.875rem';
+const lineHeight = '1.25rem';
+const titleFontSize = '1.125rem';
+const titleLineHeight = '1.5rem';
+const titleFontWeight = '500';
+const titleHeight = 2 * 16;
+const margin = 24;
+const barHeight = 32;
+const gapHeight = 4;
+const borderRadius = 4;
+const headerHeight = 32;
+const percentColumnWidth = 60;
 
 // accessor functions
 const getLabel = (d: ChartValue) => d.Label;
@@ -53,7 +69,7 @@ const getOuterColors = (
   return colorScale(label);
 };
 
-const defaultMargin = { top: 20, right: 20, bottom: 20, left: 20 };
+const defaultMargin = { top: 24, right: 24, bottom: 24, left: 24 };
 
 export type PieProps = {
   title: string;
@@ -106,17 +122,31 @@ export const PieChart = ({
   return (
     <svg
       width={width}
-      height={height}
+      height={height + titleHeight}
       style={{
         ...customPaper,
       }}>
       <rect
         rx={14}
         width={width}
-        height={height}
+        height={height + titleHeight}
         fill='white' // Background Fill
       />
-      <Group top={centerY + margin.top} left={centerX + margin.left}>
+      <Group left={margin.left} top={margin.right}>
+        <Text
+          x={0}
+          y={titleHeight / 2}
+          fill='#374151'
+          fontFamily={font}
+          fontSize={titleFontSize}
+          fontWeight={titleFontWeight}
+          lineHeight={titleLineHeight}>
+          {title}
+        </Text>
+      </Group>
+      <Group
+        top={centerY + margin.top + titleHeight}
+        left={centerX + margin.left}>
         {showOuterChart && (
           <Pie
             data={
