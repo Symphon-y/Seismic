@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Text } from '@visx/text';
 import { Group } from '@visx/group';
 import { scaleLinear } from '@visx/scale';
@@ -56,6 +56,9 @@ export const HorizontalBarChart = ({
   showValues = false,
   showCard = true,
 }: HorizontalBarChartProps) => {
+  const additionalHeightFactor = data.length > 5 ? data.length - 5 : 0;
+  const actualHeight =
+    height + additionalHeightFactor * (barHeight + gapHeight);
   // accessors
   const getLabel = (d: ChartValue) => d.Label;
   const getValue = (d: ChartValue) => Number(d.Value);
@@ -75,11 +78,11 @@ export const HorizontalBarChart = ({
       }),
     [xMax]
   );
-
+  console.log({ height, newHeight: actualHeight });
   return width < 10 ? null : (
     <svg
       width={width}
-      height={height}
+      height={actualHeight}
       style={
         showCard
           ? {
