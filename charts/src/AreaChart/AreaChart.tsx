@@ -30,7 +30,8 @@ type AreaChartProps = {
   events?: boolean;
   data?: ChartValues;
   curve?: boolean;
-  showLabels: boolean;
+  showLabels?: boolean;
+  showCard?: boolean;
 };
 
 const customPaper = {
@@ -90,6 +91,7 @@ export const AreaChart = ({
   height = 300,
   curve = true,
   showLabels = false,
+  showCard = true,
 }: AreaChartProps) => {
   // Data Accessors
   const accessors = {
@@ -168,8 +170,12 @@ export const AreaChart = ({
     return new Intl.DateTimeFormat('en-US', options).format(date);
   };
 
+  const style = showCard
+    ? { ...customPaper, ...chartContainerStyle, width, height }
+    : { ...chartContainerStyle, width, height };
+
   return (
-    <div style={{ ...customPaper, ...chartContainerStyle, width, height }}>
+    <div style={{ ...style }}>
       <XYChart
         height={270}
         margin={{ left: 60, top: 35, bottom: 35, right: showLabels ? 50 : 35 }}

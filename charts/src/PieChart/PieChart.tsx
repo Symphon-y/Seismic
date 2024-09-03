@@ -81,6 +81,7 @@ export type PieProps = {
   showInnerChart?: boolean;
   showOuterChart?: boolean;
   outerChartData?: ChartValue[];
+  showCard?: boolean;
 };
 
 export const PieChart = ({
@@ -93,6 +94,7 @@ export const PieChart = ({
   showOuterChart = false,
   showInnerChart = true,
   outerChartData = PieChartMock,
+  showCard = true,
 }: PieProps) => {
   const [selectedInnerSlice, setSelectedInnerSlice] = useState<string | null>(
     null
@@ -123,9 +125,13 @@ export const PieChart = ({
     <svg
       width={width}
       height={height + titleHeight}
-      style={{
-        ...customPaper,
-      }}>
+      style={
+        showCard
+          ? {
+              ...customPaper,
+            }
+          : {}
+      }>
       <rect
         rx={14}
         width={width}

@@ -32,6 +32,7 @@ type HorizontalBarChartProps = {
   columnTwoHeader?: string;
   columnTwoDataType?: HorizontalBarDataColumnType;
   showValues?: boolean;
+  showCard?: boolean;
 };
 
 const customPaper = {
@@ -53,6 +54,7 @@ export const HorizontalBarChart = ({
   columnTwoHeader = 'Percentage',
   columnTwoDataType = 'PercentageOfTotal',
   showValues = false,
+  showCard = true,
 }: HorizontalBarChartProps) => {
   // accessors
   const getLabel = (d: ChartValue) => d.Label;
@@ -78,9 +80,13 @@ export const HorizontalBarChart = ({
     <svg
       width={width}
       height={height}
-      style={{
-        ...customPaper,
-      }}>
+      style={
+        showCard
+          ? {
+              ...customPaper,
+            }
+          : {}
+      }>
       <rect
         x={margin}
         y={margin}
