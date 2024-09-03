@@ -28,7 +28,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     width: 500,
-    height: 325,
+    height: 300,
     title: 'Age',
     data: HorizontalBarChartMock,
     header: 'Range',
