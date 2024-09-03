@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AreaChart } from '../../../../charts/src/AreaChart/AreaChart';
-import { AreaChartMock } from '../../../../charts/src/AreaChart/AreaChartMock';
+import { AreaChartMock_MixedFormats } from '../../../../charts/src/AreaChart/AreaChartMock';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -25,10 +25,12 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     title: 'Newly Eligible Patients by Year',
-    data: AreaChartMock,
+    data: AreaChartMock_MixedFormats,
     width: 800,
     height: 280,
     curve: true,
     showLabels: false,
+    events: false,
+    showCard: true,
   },
 };

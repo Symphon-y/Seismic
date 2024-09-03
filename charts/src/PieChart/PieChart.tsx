@@ -28,7 +28,7 @@ const getValue = (d: ChartValue): number => d.Value as number;
 const getAllLabels = (data: ChartValue[]) => data.map(getLabel);
 const getAllValues = (data: ChartValue[]) => data.map(getValue);
 
-const innerColors = [
+const iColors = [
   'rgba(59,130,246, 0.7)',
   'rgba(59,130,246, 0.6)',
   'rgba(59,130,246, 0.5)',
@@ -38,36 +38,12 @@ const innerColors = [
   'rgba(59,130,246, 0.1)',
 ];
 
-const outerColors = [
+const oColors = [
   'rgba(59,130,246,1)',
   'rgba(59,130,246,0.8)',
   'rgba(59,130,246,0.6)',
   'rgba(59,130,246,0.4)',
 ];
-
-const getInnerColor = (
-  label: string,
-  labels: string[],
-  colors: string[] = innerColors
-) => {
-  const colorScale = scaleOrdinal({
-    domain: labels,
-    range: colors,
-  });
-  return colorScale(label);
-};
-
-const getOuterColors = (
-  label: string,
-  labels: string[],
-  colors: string[] = outerColors
-) => {
-  const colorScale = scaleOrdinal({
-    domain: labels,
-    range: colors,
-  });
-  return colorScale(label);
-};
 
 const defaultMargin = { top: 24, right: 24, bottom: 24, left: 24 };
 
@@ -82,6 +58,8 @@ export type PieProps = {
   showOuterChart?: boolean;
   outerChartData?: ChartValue[];
   showCard?: boolean;
+  innerColors?: string[];
+  outerColors?: string[];
 };
 
 export const PieChart = ({
@@ -95,6 +73,8 @@ export const PieChart = ({
   showInnerChart = true,
   outerChartData = PieChartMock,
   showCard = true,
+  innerColors = iColors,
+  outerColors = oColors,
 }: PieProps) => {
   const [selectedInnerSlice, setSelectedInnerSlice] = useState<string | null>(
     null
@@ -102,6 +82,30 @@ export const PieChart = ({
   const [selectedOuterSlice, setSelectedOuterSlice] = useState<string | null>(
     null
   );
+
+  const getInnerColor = (
+    label: string,
+    labels: string[],
+    colors: string[] = innerColors
+  ) => {
+    const colorScale = scaleOrdinal({
+      domain: labels,
+      range: colors,
+    });
+    return colorScale(label);
+  };
+
+  const getOuterColors = (
+    label: string,
+    labels: string[],
+    colors: string[] = outerColors
+  ) => {
+    const colorScale = scaleOrdinal({
+      domain: labels,
+      range: colors,
+    });
+    return colorScale(label);
+  };
 
   const innerLabels = getAllLabels(data) || ([] as ChartValue[]);
   const outerLabels = getAllLabels(outerChartData);

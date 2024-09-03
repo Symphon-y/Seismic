@@ -36,6 +36,8 @@ export const Primary: Story = {
     columnTwoHeader: 'Percentage',
     columnTwoDataType: 'PercentageOfTotal',
     showValues: true,
+    events: false,
+    showCard: true,
   },
 };
 
@@ -50,5 +52,7 @@ export const Longitudinality: Story = {
     columnTwoHeader: 'Percentage',
     columnTwoDataType: 'PercentageOfMax',
     showValues: true,
+    events: false,
+    showCard: true,
   },
 };
