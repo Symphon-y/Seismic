@@ -113,7 +113,7 @@ export const PieChart = ({
   const radius = Math.min(innerWidth, innerHeight) / 2;
   const centerY = innerHeight / 2;
   const centerX = innerWidth / 2;
-  const donutThickness = 50;
+  const outerChartThickness = 50;
   const customPaper = {
     borderRadius: '.5rem',
     boxShadow: `0px 1px 3px rgba(0, 0, 0, 0.2),
@@ -164,7 +164,7 @@ export const PieChart = ({
             }
             pieValue={getValue}
             outerRadius={radius}
-            innerRadius={radius - donutThickness}
+            innerRadius={radius - outerChartThickness}
             cornerRadius={3}
             padAngle={0.005}>
             {(pie) => (
@@ -194,7 +194,9 @@ export const PieChart = ({
             }
             pieValue={getValue}
             pieSortValues={() => -1}
-            outerRadius={radius - donutThickness * 1.3}>
+            outerRadius={
+              showOuterChart ? radius - outerChartThickness * 1.3 : radius
+            }>
             {(pie) => (
               <AnimatedPie<ChartValue>
                 {...pie}
