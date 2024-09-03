@@ -4,6 +4,10 @@ import {
 } from '../../../../charts/src/HorizontalBarChart';
 import { PieChart } from '../../../../charts/src/PieChart/PieChart';
 import type { Meta, StoryObj } from '@storybook/react';
+import {
+  PieChartMock,
+  PieChartOuterMock,
+} from '../../../../charts/src/PieChart/PieChartMock';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -27,7 +31,19 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Primary: Story = {
   args: {
+    title: 'Pie Chart',
     width: 500,
     height: 325,
+    data: PieChartMock,
+    showOuterChart: true,
+    showInnerChart: true,
+    outerChartData: PieChartOuterMock,
+    animate: true,
+    margin: {
+      top: 24,
+      right: 24,
+      bottom: 24,
+      left: 24,
+    },
   },
 };

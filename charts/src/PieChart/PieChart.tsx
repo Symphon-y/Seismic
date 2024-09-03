@@ -1,79 +1,92 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useState } from 'react';
 import Pie, { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
 import { scaleOrdinal } from '@visx/scale';
 import { Group } from '@visx/group';
-import letterFrequency, {
-  LetterFrequency,
-} from '@visx/mock-data/lib/mocks/letterFrequency';
-import browserUsage, {
-  BrowserUsage as Browsers,
-} from '@visx/mock-data/lib/mocks/browserUsage';
 import { animated, useTransition, interpolate } from '@react-spring/web';
-
-// data and types
-type BrowserNames = keyof Browsers;
-
-interface BrowserUsage {
-  label: BrowserNames;
-  usage: number;
-}
-
-const letters: LetterFrequency[] = letterFrequency.slice(0, 4);
-const browserNames = Object.keys(browserUsage[0]).filter(
-  (k) => k !== 'date'
-) as BrowserNames[];
-const browsers: BrowserUsage[] = browserNames.map((name) => ({
-  label: name,
-  usage: Number(browserUsage[0][name]),
-}));
+import { ChartValue } from '../ChartTypes';
+import { PieChartMock } from './PieChartMock';
 
 // accessor functions
-const usage = (d: BrowserUsage) => d.usage;
-const frequency = (d: LetterFrequency) => d.frequency;
+const getLabel = (d: ChartValue) => d.Label;
+const getValue = (d: ChartValue): number => d.Value as number;
+const getAllLabels = (data: ChartValue[]) => data.map(getLabel);
+const getAllValues = (data: ChartValue[]) => data.map(getValue);
 
-// color scales
-const getBrowserColor = scaleOrdinal({
-  domain: browserNames,
-  range: [
-    'rgba(59,130,246, 0.7)',
-    'rgba(59,130,246, 0.6)',
-    'rgba(59,130,246, 0.5)',
-    'rgba(59,130,246, 0.4)',
-    'rgba(59,130,246, 0.3)',
-    'rgba(59,130,246, 0.2)',
-    'rgba(59,130,246, 0.1)',
-  ],
-});
-const getLetterFrequencyColor = scaleOrdinal({
-  domain: letters.map((l) => l.letter),
-  range: [
-    'rgba(59,130,246,1)',
-    'rgba(59,130,246,0.8)',
-    'rgba(59,130,246,0.6)',
-    'rgba(59,130,246,0.4)',
-  ],
-});
+const innerColors = [
+  'rgba(59,130,246, 0.7)',
+  'rgba(59,130,246, 0.6)',
+  'rgba(59,130,246, 0.5)',
+  'rgba(59,130,246, 0.4)',
+  'rgba(59,130,246, 0.3)',
+  'rgba(59,130,246, 0.2)',
+  'rgba(59,130,246, 0.1)',
+];
+
+const outerColors = [
+  'rgba(59,130,246,1)',
+  'rgba(59,130,246,0.8)',
+  'rgba(59,130,246,0.6)',
+  'rgba(59,130,246,0.4)',
+];
+
+const getInnerColor = (
+  label: string,
+  labels: string[],
+  colors: string[] = innerColors
+) => {
+  const colorScale = scaleOrdinal({
+    domain: labels,
+    range: colors,
+  });
+  return colorScale(label);
+};
+
+const getOuterColors = (
+  label: string,
+  labels: string[],
+  colors: string[] = outerColors
+) => {
+  const colorScale = scaleOrdinal({
+    domain: labels,
+    range: colors,
+  });
+  return colorScale(label);
+};
 
 const defaultMargin = { top: 20, right: 20, bottom: 20, left: 20 };
 
 export type PieProps = {
+  title: string;
   width: number;
   height: number;
+  data: ChartValue[];
   margin?: typeof defaultMargin;
   animate?: boolean;
+  showInnerChart?: boolean;
+  showOuterChart?: boolean;
+  outerChartData?: ChartValue[];
 };
 
 export const PieChart = ({
+  title = 'Pie Chart',
   width,
   height,
+  data = PieChartMock,
   margin = defaultMargin,
   animate = true,
+  showOuterChart = false,
+  showInnerChart = true,
+  outerChartData = PieChartMock,
 }: PieProps) => {
-  const [selectedBrowser, setSelectedBrowser] = useState<string | null>(null);
-  const [selectedAlphabetLetter, setSelectedAlphabetLetter] = useState<
-    string | null
-  >(null);
+  const [selectedInnerSlice, setSelectedInnerSlice] = useState<string | null>(
+    null
+  );
+  const [selectedOuterSlice, setSelectedOuterSlice] = useState<string | null>(
+    null
+  );
+
+  const innerLabels = getAllLabels(data) || ([] as ChartValue[]);
+  const outerLabels = getAllLabels(outerChartData);
 
   if (width < 10) return null;
 
@@ -104,62 +117,68 @@ export const PieChart = ({
         fill='white' // Background Fill
       />
       <Group top={centerY + margin.top} left={centerX + margin.left}>
-        <Pie
-          data={
-            selectedBrowser
-              ? browsers.filter(({ label }) => label === selectedBrowser)
-              : browsers
-          }
-          pieValue={usage}
-          outerRadius={radius}
-          innerRadius={radius - donutThickness}
-          cornerRadius={3}
-          padAngle={0.005}>
-          {(pie) => (
-            <AnimatedPie<BrowserUsage>
-              {...pie}
-              animate={animate}
-              getKey={(arc) => arc.data.label}
-              onClickDatum={({ data: { label } }) =>
-                animate &&
-                setSelectedBrowser(
-                  selectedBrowser && selectedBrowser === label ? null : label
-                )
-              }
-              getColor={(arc) => getBrowserColor(arc.data.label)}
-            />
-          )}
-        </Pie>
-        <Pie
-          data={
-            selectedAlphabetLetter
-              ? letters.filter(
-                  ({ letter }) => letter === selectedAlphabetLetter
-                )
-              : letters
-          }
-          pieValue={frequency}
-          pieSortValues={() => -1}
-          outerRadius={radius - donutThickness * 1.3}>
-          {(pie) => (
-            <AnimatedPie<LetterFrequency>
-              {...pie}
-              animate={animate}
-              getKey={({ data: { letter } }) => letter}
-              onClickDatum={({ data: { letter } }) =>
-                animate &&
-                setSelectedAlphabetLetter(
-                  selectedAlphabetLetter && selectedAlphabetLetter === letter
-                    ? null
-                    : letter
-                )
-              }
-              getColor={({ data: { letter } }) =>
-                getLetterFrequencyColor(letter)
-              }
-            />
-          )}
-        </Pie>
+        {showOuterChart && (
+          <Pie
+            data={
+              selectedOuterSlice
+                ? outerChartData.filter(
+                    ({ Label }: ChartValue) => Label === selectedOuterSlice
+                  )
+                : outerChartData
+            }
+            pieValue={getValue}
+            outerRadius={radius}
+            innerRadius={radius - donutThickness}
+            cornerRadius={3}
+            padAngle={0.005}>
+            {(pie) => (
+              <AnimatedPie<ChartValue>
+                {...pie}
+                animate={animate}
+                getKey={(arc) => arc.data.Label}
+                onClickDatum={({ data: { Label } }) =>
+                  animate &&
+                  setSelectedOuterSlice(
+                    selectedOuterSlice && selectedOuterSlice === Label
+                      ? null
+                      : Label
+                  )
+                }
+                getColor={(arc) => getOuterColors(arc.data.Label, outerLabels)}
+              />
+            )}
+          </Pie>
+        )}
+        {showInnerChart && (
+          <Pie
+            data={
+              selectedInnerSlice
+                ? data.filter(({ Label }) => Label === selectedInnerSlice)
+                : data
+            }
+            pieValue={getValue}
+            pieSortValues={() => -1}
+            outerRadius={radius - donutThickness * 1.3}>
+            {(pie) => (
+              <AnimatedPie<ChartValue>
+                {...pie}
+                animate={animate}
+                getKey={({ data: { Label } }) => Label}
+                onClickDatum={({ data: { Label } }) =>
+                  animate &&
+                  setSelectedInnerSlice(
+                    selectedInnerSlice && selectedInnerSlice === Label
+                      ? null
+                      : Label
+                  )
+                }
+                getColor={({ data: { Label } }) =>
+                  getInnerColor(Label, innerLabels)
+                }
+              />
+            )}
+          </Pie>
+        )}
       </Group>
       {animate && (
         <text

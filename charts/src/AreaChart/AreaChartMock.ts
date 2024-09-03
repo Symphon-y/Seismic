@@ -62,3 +62,30 @@ export const AreaChartMock_MixedFormats: ChartValues = [
   { Label: '2023-07-30T15:45:30.500Z', Value: 3505 }, // ISO 8601 datetime
   { Label: '2024', Value: 2847 }, // Year only
 ];
+
+export const AreaChartMock_CurveBug: ChartValues = [
+  {
+    Label: '2024-08-14T06:36:29.219997+00:00',
+    Value: 1048,
+  },
+  {
+    Label: '2024-08-16T00:13:03.858969+00:00',
+    Value: 1058,
+  },
+  {
+    Label: '2024-08-17T05:23:21.351017+00:00',
+    Value: 1063,
+  },
+  {
+    Label: '2024-08-14T06:36:29.219997+00:00',
+    Value: 1048,
+  },
+  {
+    Label: '2024-08-16T00:13:03.858969+00:00',
+    Value: 1058,
+  },
+  {
+    Label: '2024-08-17T05:23:21.351017+00:00',
+    Value: 1063,
+  },
+];

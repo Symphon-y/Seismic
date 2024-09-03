@@ -19,7 +19,7 @@ const titleFontWeight = '500';
 const titleHeight = 2 * 16;
 const tickLabelOffset = 10;
 
-import { AreaChartMock_ISO8601 as AreaChartMock } from './AreaChartMock';
+import { AreaChartMock_CurveBug as AreaChartMock } from './AreaChartMock';
 import { Curve } from '@visx/visx';
 import { ChartValue, ChartValues } from '../ChartTypes';
 
