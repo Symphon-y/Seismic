@@ -19,7 +19,7 @@ const barHeight = 32;
 const gapHeight = 4;
 const borderRadius = 4;
 const headerHeight = 32;
-const percentColumnWidth = 60;
+const percentColumnWidth = 72;
 
 type HorizontalBarChartProps = {
   width: number;
@@ -33,6 +33,7 @@ type HorizontalBarChartProps = {
   columnTwoDataType?: HorizontalBarDataColumnType;
   showValues?: boolean;
   showCard?: boolean;
+  sort?: 'Ascending' | 'Descending' | null;
 };
 
 const customPaper = {
@@ -55,6 +56,7 @@ export const HorizontalBarChart = ({
   columnTwoDataType = 'PercentageOfTotal',
   showValues = false,
   showCard = true,
+  sort = null,
 }: HorizontalBarChartProps) => {
   const additionalHeightFactor = data.length > 5 ? data.length - 5 : 0;
   const actualHeight =
@@ -63,6 +65,10 @@ export const HorizontalBarChart = ({
   const getLabel = (d: ChartValue) => d.Label;
   const getValue = (d: ChartValue) => Number(d.Value);
   const totalValue = data.reduce((acc, d) => acc + getValue(d), 0);
+
+  // Get the width of the longest label in the right column
+  const longestLabelWidth = Math.max(...data.map((d) => getLabel(d).length));
+
   // Adjust bounds to accommodate the percentage column
   const xMax = columnTwo
     ? width - 2 * margin - percentColumnWidth
@@ -72,13 +78,20 @@ export const HorizontalBarChart = ({
   const xScale = useMemo(
     () =>
       scaleLinear<number>({
-        range: [0, xMax],
+        range: [0, xMax - percentColumnWidth - longestLabelWidth],
         round: true,
         domain: [0, Math.max(...data.map(getValue))],
       }),
     [xMax]
   );
-  console.log({ height, newHeight: actualHeight });
+
+  // Sort data
+  if (sort === 'Ascending') {
+    data.sort((a, b) => getValue(a) - getValue(b));
+  } else if (sort === 'Descending') {
+    data.sort((a, b) => getValue(b) - getValue(a));
+  }
+
   return width < 10 ? null : (
     <svg
       width={width}

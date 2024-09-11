@@ -61,5 +61,6 @@ export const Primary: Story = {
       'rgba(59,130,246,0.4)',
     ],
     showCard: true,
+    legend: true,
   },
 };

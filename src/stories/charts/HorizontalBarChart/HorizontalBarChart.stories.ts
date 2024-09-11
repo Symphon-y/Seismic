@@ -38,6 +38,7 @@ export const Primary: Story = {
     showValues: true,
     events: false,
     showCard: true,
+    sort: null,
   },
 };
 

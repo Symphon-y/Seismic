@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.13.0",
+    "@storybook/addon-actions": "^8.2.9",
+    "@storybook/addon-console": "^3.0.0",
     "@visx/visx": "^3.11.0"
   },
   "peerDependencies": {

@@ -16,17 +16,12 @@ const titleLineHeight = '1.5rem';
 const titleFontWeight = '500';
 const titleHeight = 2 * 16;
 const margin = 24;
-const barHeight = 32;
-const gapHeight = 4;
-const borderRadius = 4;
-const headerHeight = 32;
-const percentColumnWidth = 60;
+const legendSpacing = 16;
 
 // accessor functions
 const getLabel = (d: ChartValue) => d.Label;
 const getValue = (d: ChartValue): number => d.Value as number;
 const getAllLabels = (data: ChartValue[]) => data.map(getLabel);
-const getAllValues = (data: ChartValue[]) => data.map(getValue);
 
 const iColors = [
   'rgba(59,130,246, 0.7)',
@@ -60,6 +55,7 @@ export type PieProps = {
   showCard?: boolean;
   innerColors?: string[];
   outerColors?: string[];
+  legend?: boolean;
 };
 
 export const PieChart = ({
@@ -75,6 +71,7 @@ export const PieChart = ({
   showCard = true,
   innerColors = iColors,
   outerColors = oColors,
+  legend = true,
 }: PieProps) => {
   const [selectedInnerSlice, setSelectedInnerSlice] = useState<string | null>(
     null
@@ -82,6 +79,7 @@ export const PieChart = ({
   const [selectedOuterSlice, setSelectedOuterSlice] = useState<string | null>(
     null
   );
+  // const [showLegend, setShowLegend] = useState<boolean>(true);
 
   const getInnerColor = (
     label: string,
@@ -107,7 +105,7 @@ export const PieChart = ({
     return colorScale(label);
   };
 
-  const innerLabels = getAllLabels(data) || ([] as ChartValue[]);
+  const innerLabels = getAllLabels(data);
   const outerLabels = getAllLabels(outerChartData);
 
   if (width < 10) return null;
@@ -118,6 +116,7 @@ export const PieChart = ({
   const centerY = innerHeight / 2;
   const centerX = innerWidth / 2;
   const outerChartThickness = 50;
+
   const customPaper = {
     borderRadius: '.5rem',
     boxShadow: `0px 1px 3px rgba(0, 0, 0, 0.2),
@@ -125,116 +124,143 @@ export const PieChart = ({
                 0px 2px 1px rgba(0, 0, 0, 0.12)`,
     backgroundColor: '#fff',
   };
+
   return (
-    <svg
-      width={width}
-      height={height + titleHeight}
-      style={
-        showCard
-          ? {
-              ...customPaper,
-            }
-          : {}
-      }>
-      <rect
-        rx={14}
+    <div style={{ position: 'relative' }}>
+      {/* <button
+        style={{
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          background: '#374151',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '4px',
+          padding: '4px 8px',
+          cursor: 'pointer',
+        }}
+        onClick={() => setShowLegend(!showLegend)}>
+        {showLegend ? 'Hide Legend' : 'Show Legend'}
+      </button> */}
+      <svg
         width={width}
         height={height + titleHeight}
-        fill='white' // Background Fill
-      />
-      <Group left={margin.left} top={margin.right}>
-        <Text
-          x={0}
-          y={titleHeight / 2}
-          fill='#374151'
-          fontFamily={font}
-          fontSize={titleFontSize}
-          fontWeight={titleFontWeight}
-          lineHeight={titleLineHeight}>
-          {title}
-        </Text>
-      </Group>
-      <Group
-        top={centerY + margin.top + titleHeight}
-        left={centerX + margin.left}>
-        {showOuterChart && (
-          <Pie
-            data={
-              selectedOuterSlice
-                ? outerChartData.filter(
-                    ({ Label }: ChartValue) => Label === selectedOuterSlice
-                  )
-                : outerChartData
-            }
-            pieValue={getValue}
-            outerRadius={radius}
-            innerRadius={radius - outerChartThickness}
-            cornerRadius={3}
-            padAngle={0.005}>
-            {(pie) => (
-              <AnimatedPie<ChartValue>
-                {...pie}
-                animate={animate}
-                getKey={(arc) => arc.data.Label}
-                onClickDatum={({ data: { Label } }) =>
-                  animate &&
-                  setSelectedOuterSlice(
-                    selectedOuterSlice && selectedOuterSlice === Label
-                      ? null
-                      : Label
-                  )
-                }
-                getColor={(arc) => getOuterColors(arc.data.Label, outerLabels)}
-              />
-            )}
-          </Pie>
-        )}
-        {showInnerChart && (
-          <Pie
-            data={
-              selectedInnerSlice
-                ? data.filter(({ Label }) => Label === selectedInnerSlice)
-                : data
-            }
-            pieValue={getValue}
-            pieSortValues={() => -1}
-            outerRadius={
-              showOuterChart ? radius - outerChartThickness * 1.3 : radius
-            }>
-            {(pie) => (
-              <AnimatedPie<ChartValue>
-                {...pie}
-                animate={animate}
-                getKey={({ data: { Label } }) => Label}
-                onClickDatum={({ data: { Label } }) =>
-                  animate &&
-                  setSelectedInnerSlice(
-                    selectedInnerSlice && selectedInnerSlice === Label
-                      ? null
-                      : Label
-                  )
-                }
-                getColor={({ data: { Label } }) =>
-                  getInnerColor(Label, innerLabels)
-                }
-              />
-            )}
-          </Pie>
-        )}
-      </Group>
-      {animate && (
-        <text
-          textAnchor='end'
-          x={width - 16}
-          y={height - 16}
+        style={showCard ? { ...customPaper } : {}}>
+        <rect
+          rx={14}
+          width={width}
+          height={height + titleHeight}
           fill='white'
-          fontSize={11}
-          fontWeight={300}
-          pointerEvents='none'>
-          Click segments to update
-        </text>
-      )}
-    </svg>
+        />
+        <Group left={margin.left} top={margin.right}>
+          <Text
+            x={0}
+            y={titleHeight / 2}
+            fill='#374151'
+            fontFamily={font}
+            fontSize={titleFontSize}
+            fontWeight={titleFontWeight}
+            lineHeight={titleLineHeight}>
+            {title}
+          </Text>
+        </Group>
+        <Group
+          top={centerY + margin.top + titleHeight}
+          left={centerX + margin.left}>
+          {showOuterChart && (
+            <Pie
+              data={
+                selectedOuterSlice
+                  ? outerChartData.filter(
+                      ({ Label }) => Label === selectedOuterSlice
+                    )
+                  : outerChartData
+              }
+              pieValue={getValue}
+              outerRadius={radius}
+              innerRadius={radius - outerChartThickness}
+              cornerRadius={3}
+              padAngle={0.005}>
+              {(pie) => (
+                <AnimatedPie<ChartValue>
+                  {...pie}
+                  animate={animate}
+                  getKey={(arc) => arc.data.Label}
+                  onClickDatum={({ data: { Label } }) =>
+                    animate &&
+                    setSelectedOuterSlice(
+                      selectedOuterSlice && selectedOuterSlice === Label
+                        ? null
+                        : Label
+                    )
+                  }
+                  getColor={(arc) =>
+                    getOuterColors(arc.data.Label, outerLabels)
+                  }
+                />
+              )}
+            </Pie>
+          )}
+          {showInnerChart && (
+            <Pie
+              data={
+                selectedInnerSlice
+                  ? data.filter(({ Label }) => Label === selectedInnerSlice)
+                  : data
+              }
+              pieValue={getValue}
+              pieSortValues={() => -1}
+              outerRadius={
+                showOuterChart ? radius - outerChartThickness * 1.3 : radius
+              }>
+              {(pie) => (
+                <AnimatedPie<ChartValue>
+                  {...pie}
+                  animate={animate}
+                  getKey={({ data: { Label } }) => Label}
+                  onClickDatum={({ data: { Label } }) =>
+                    animate &&
+                    setSelectedInnerSlice(
+                      selectedInnerSlice && selectedInnerSlice === Label
+                        ? null
+                        : Label
+                    )
+                  }
+                  getColor={({ data: { Label } }) =>
+                    getInnerColor(Label, innerLabels)
+                  }
+                />
+              )}
+            </Pie>
+          )}
+        </Group>
+
+        {/* Legend */}
+        {legend && (
+          <Group top={height - margin.bottom - 55} left={18}>
+            {innerLabels.map((label, i) => (
+              <g
+                key={`legend-${label}`}
+                transform={`translate(0, ${i * legendSpacing})`}>
+                <rect
+                  width={16}
+                  height={16}
+                  fill={getInnerColor(label, innerLabels)}
+                />
+                <Text
+                  x={20}
+                  y={12}
+                  fontFamily={font}
+                  fontSize={fontSize}
+                  fill='#374151'>
+                  {label}
+                </Text>
+              </g>
+            ))}
+          </Group>
+        )}
+      </svg>
+    </div>
   );
 };
 
@@ -242,7 +268,6 @@ export const PieChart = ({
 type AnimatedStyles = { startAngle: number; endAngle: number; opacity: number };
 
 const fromLeaveTransition = ({ endAngle }: PieArcDatum<any>) => ({
-  // enter from 360° if end angle is > 180°
   startAngle: endAngle > Math.PI ? 2 * Math.PI : 0,
   endAngle: endAngle > Math.PI ? 2 * Math.PI : 0,
   opacity: 0,
@@ -283,15 +308,9 @@ function AnimatedPie<Datum>({
     return (
       <g key={key}>
         <animated.path
-          // compute interpolated path d attribute from intermediate angle values
           d={interpolate(
             [props.startAngle, props.endAngle],
-            (startAngle, endAngle) =>
-              path({
-                ...arc,
-                startAngle,
-                endAngle,
-              })
+            (startAngle, endAngle) => path({ ...arc, startAngle, endAngle })
           )}
           fill={getColor(arc)}
           onClick={() => onClickDatum(arc)}
