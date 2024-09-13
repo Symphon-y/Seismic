@@ -32,6 +32,7 @@ type AreaChartProps = {
   curve?: boolean;
   showLabels?: boolean;
   showCard?: boolean;
+  formatValue?: (value: number) => string;
 };
 
 const customPaper = {
@@ -92,6 +93,7 @@ export const AreaChart = ({
   curve = true,
   showLabels = false,
   showCard = true,
+  formatValue,
 }: AreaChartProps) => {
   // Data Accessors
   const accessors = {
@@ -277,7 +279,9 @@ export const AreaChart = ({
                   fontFamily={font}
                   fontSize={12}
                   textAnchor='middle'>
-                  {accessors.yAccessor(props.datum)}
+                  {formatValue
+                    ? formatValue(accessors.yAccessor(props.datum))
+                    : accessors.yAccessor(props.datum)}
                 </Text>
               </>
             )}
@@ -307,7 +311,9 @@ export const AreaChart = ({
                             </div>
                             <div style={valueStyle}>
                               <div style={coloredSquareStyle('#3b82f6')} />
-                              {accessors.yAccessor(datum)}
+                              {formatValue
+                                ? formatValue(accessors.yAccessor(datum))
+                                : accessors.yAccessor(datum)}
                             </div>
                           </div>
                         );

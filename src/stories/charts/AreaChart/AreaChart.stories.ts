@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { AreaChart } from '../../../../charts/src/AreaChart/AreaChart';
 import { AreaChartMock_MixedFormats } from '../../../../charts/src/AreaChart/AreaChartMock';
+import { abbreviateNumbers } from '@/stories/utils/abbreviateNumbers';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -32,5 +33,6 @@ export const Primary: Story = {
     showLabels: false,
     events: false,
     showCard: true,
+    formatValue: abbreviateNumbers,
   },
 };

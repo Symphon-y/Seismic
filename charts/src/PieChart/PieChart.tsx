@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Pie, { ProvidedProps, PieArcDatum } from '@visx/shape/lib/shapes/Pie';
 import { scaleOrdinal } from '@visx/scale';
 import { Group } from '@visx/group';
@@ -6,6 +6,7 @@ import { animated, useTransition, interpolate } from '@react-spring/web';
 import { ChartValue } from '../ChartTypes';
 import { PieChartMock } from './PieChartMock';
 import { Text } from '@visx/text';
+import { Tooltip, useTooltip, TooltipWithBounds } from '@visx/tooltip';
 
 const font =
   'Inter,ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji';
@@ -23,7 +24,43 @@ const getLabel = (d: ChartValue) => d.Label;
 const getValue = (d: ChartValue): number => d.Value as number;
 const getAllLabels = (data: ChartValue[]) => data.map(getLabel);
 
-const iColors = [
+interface ExtendedDatum {
+  Label: string;
+  Value: number;
+}
+
+const tooltipContainerStyle = {
+  padding: '8px 16px',
+  fontSize: '12px',
+  borderRadius: '4px',
+  color: '#222222',
+  zIndex: 1000,
+};
+
+const dateStyle = {
+  fontSize: '12px',
+  marginBottom: '8px',
+  color: '#222222',
+  fontWeight: 600,
+};
+
+const valueStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  fontWeight: 400,
+  color: '#000000',
+};
+
+const coloredSquareStyle = (color: string) => ({
+  display: 'inline-block',
+  width: '11px',
+  height: '11px',
+  marginRight: '8px',
+  background: color,
+  borderRadius: '4px',
+});
+
+const pColors = [
   'rgba(59,130,246, 0.7)',
   'rgba(59,130,246, 0.6)',
   'rgba(59,130,246, 0.5)',
@@ -33,7 +70,7 @@ const iColors = [
   'rgba(59,130,246, 0.1)',
 ];
 
-const oColors = [
+const dColors = [
   'rgba(59,130,246,1)',
   'rgba(59,130,246,0.8)',
   'rgba(59,130,246,0.6)',
@@ -49,13 +86,15 @@ export type PieProps = {
   data: ChartValue[];
   margin?: typeof defaultMargin;
   animate?: boolean;
-  showInnerChart?: boolean;
-  showOuterChart?: boolean;
-  outerChartData?: ChartValue[];
+  showPieChart?: boolean;
+  showDonutChart?: boolean;
+  donutChartData?: ChartValue[];
   showCard?: boolean;
-  innerColors?: string[];
-  outerColors?: string[];
+  pieColors?: string[];
+  donutColors?: string[];
   legend?: boolean;
+  showValues?: boolean;
+  formatValue?: (value: number) => string;
 };
 
 export const PieChart = ({
@@ -65,26 +104,47 @@ export const PieChart = ({
   data = PieChartMock,
   margin = defaultMargin,
   animate = true,
-  showOuterChart = false,
-  showInnerChart = true,
-  outerChartData = PieChartMock,
+  showDonutChart = false,
+  showPieChart = true,
+  donutChartData = PieChartMock,
   showCard = true,
-  innerColors = iColors,
-  outerColors = oColors,
+  pieColors = pColors,
+  donutColors = dColors,
   legend = true,
+  showValues = true,
+  formatValue = (value: number) => value.toString(),
 }: PieProps) => {
-  const [selectedInnerSlice, setSelectedInnerSlice] = useState<string | null>(
-    null
-  );
-  const [selectedOuterSlice, setSelectedOuterSlice] = useState<string | null>(
-    null
-  );
-  // const [showLegend, setShowLegend] = useState<boolean>(true);
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip<{ label: string; value: number; index: number }>();
 
-  const getInnerColor = (
+  const [selectedPieSlice, setSelectedPieSlice] = useState<string | null>(null);
+  const [selectedDonutSlice, setSelectedDonutSlice] = useState<string | null>(
+    null
+  );
+
+  const getPieColor = (
     label: string,
     labels: string[],
-    colors: string[] = innerColors
+    colors: string[] = pieColors
+  ) => {
+    const colorScale = scaleOrdinal({
+      domain: labels,
+      range: colors,
+    });
+    console.log(colorScale(label));
+    return colorScale(label);
+  };
+
+  const getDonutColors = (
+    label: string,
+    labels: string[],
+    colors: string[] = donutColors
   ) => {
     const colorScale = scaleOrdinal({
       domain: labels,
@@ -93,29 +153,17 @@ export const PieChart = ({
     return colorScale(label);
   };
 
-  const getOuterColors = (
-    label: string,
-    labels: string[],
-    colors: string[] = outerColors
-  ) => {
-    const colorScale = scaleOrdinal({
-      domain: labels,
-      range: colors,
-    });
-    return colorScale(label);
-  };
-
-  const innerLabels = getAllLabels(data);
-  const outerLabels = getAllLabels(outerChartData);
+  const PieLabels = getAllLabels(data);
+  const DonutLabels = getAllLabels(donutChartData);
 
   if (width < 10) return null;
 
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-  const radius = Math.min(innerWidth, innerHeight) / 2;
-  const centerY = innerHeight / 2;
-  const centerX = innerWidth / 2;
-  const outerChartThickness = 50;
+  const PieWidth = width - margin.left - margin.right;
+  const PieHeight = height - margin.top - margin.bottom;
+  const radius = Math.min(PieWidth, PieHeight) / 2;
+  const centerY = PieHeight / 2;
+  const centerX = PieWidth / 2;
+  const DonutChartThickness = 50;
 
   const customPaper = {
     borderRadius: '.5rem',
@@ -127,21 +175,6 @@ export const PieChart = ({
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* <button
-        style={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          background: '#374151',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          padding: '4px 8px',
-          cursor: 'pointer',
-        }}
-        onClick={() => setShowLegend(!showLegend)}>
-        {showLegend ? 'Hide Legend' : 'Show Legend'}
-      </button> */}
       <svg
         width={width}
         height={height + titleHeight}
@@ -167,68 +200,88 @@ export const PieChart = ({
         <Group
           top={centerY + margin.top + titleHeight}
           left={centerX + margin.left}>
-          {showOuterChart && (
+          {showDonutChart && (
             <Pie
               data={
-                selectedOuterSlice
-                  ? outerChartData.filter(
-                      ({ Label }) => Label === selectedOuterSlice
+                selectedDonutSlice
+                  ? donutChartData.filter(
+                      ({ Label }) => Label === selectedDonutSlice
                     )
-                  : outerChartData
+                  : donutChartData
               }
               pieValue={getValue}
               outerRadius={radius}
-              innerRadius={radius - outerChartThickness}
+              innerRadius={radius - DonutChartThickness}
               cornerRadius={3}
               padAngle={0.005}>
               {(pie) => (
                 <AnimatedPie<ChartValue>
                   {...pie}
+                  tooltipData={tooltipData}
+                  tooltipLeft={tooltipLeft}
+                  tooltipTop={tooltipTop}
+                  tooltipOpen={tooltipOpen}
+                  showTooltip={showTooltip}
+                  hideTooltip={hideTooltip}
+                  height={height}
+                  width={width}
                   animate={animate}
                   getKey={(arc) => arc.data.Label}
                   onClickDatum={({ data: { Label } }) =>
                     animate &&
-                    setSelectedOuterSlice(
-                      selectedOuterSlice && selectedOuterSlice === Label
+                    setSelectedDonutSlice(
+                      selectedDonutSlice && selectedDonutSlice === Label
                         ? null
                         : Label
                     )
                   }
                   getColor={(arc) =>
-                    getOuterColors(arc.data.Label, outerLabels)
+                    getDonutColors(arc.data.Label, DonutLabels)
                   }
+                  selectedSlice={selectedDonutSlice}
                 />
               )}
             </Pie>
           )}
-          {showInnerChart && (
+          {showPieChart && (
             <Pie
               data={
-                selectedInnerSlice
-                  ? data.filter(({ Label }) => Label === selectedInnerSlice)
+                selectedPieSlice
+                  ? data.filter(({ Label }) => Label === selectedPieSlice)
                   : data
               }
               pieValue={getValue}
               pieSortValues={() => -1}
               outerRadius={
-                showOuterChart ? radius - outerChartThickness * 1.3 : radius
+                showDonutChart ? radius - DonutChartThickness * 1.3 : radius
               }>
               {(pie) => (
                 <AnimatedPie<ChartValue>
                   {...pie}
+                  tooltipData={tooltipData}
+                  tooltipLeft={tooltipLeft}
+                  tooltipTop={tooltipTop}
+                  tooltipOpen={tooltipOpen}
+                  showTooltip={showTooltip}
+                  hideTooltip={hideTooltip}
+                  height={height}
+                  width={width}
                   animate={animate}
                   getKey={({ data: { Label } }) => Label}
                   onClickDatum={({ data: { Label } }) =>
                     animate &&
-                    setSelectedInnerSlice(
-                      selectedInnerSlice && selectedInnerSlice === Label
+                    setSelectedPieSlice(
+                      selectedPieSlice && selectedPieSlice === Label
                         ? null
                         : Label
                     )
                   }
                   getColor={({ data: { Label } }) =>
-                    getInnerColor(Label, innerLabels)
+                    getPieColor(Label, PieLabels)
                   }
+                  showValues={showValues}
+                  formatValue={formatValue}
+                  selectedSlice={selectedPieSlice}
                 />
               )}
             </Pie>
@@ -238,14 +291,14 @@ export const PieChart = ({
         {/* Legend */}
         {legend && (
           <Group top={height - margin.bottom - 55} left={18}>
-            {innerLabels.map((label, i) => (
+            {PieLabels.map((label, i) => (
               <g
                 key={`legend-${label}`}
                 transform={`translate(0, ${i * legendSpacing})`}>
                 <rect
                   width={16}
                   height={16}
-                  fill={getInnerColor(label, innerLabels)}
+                  fill={getPieColor(label, PieLabels)}
                 />
                 <Text
                   x={20}
@@ -260,6 +313,30 @@ export const PieChart = ({
           </Group>
         )}
       </svg>
+      {/* Tooltip */}
+      {!showValues && tooltipData && (
+        <TooltipWithBounds
+          top={tooltipTop ? tooltipTop + height / 2 : 0}
+          left={tooltipLeft ? tooltipLeft + width / 2 : 0}>
+          <div style={tooltipContainerStyle}>
+            {tooltipData && (
+              <>
+                <div style={dateStyle}>{tooltipData.label}</div>
+                <div style={valueStyle}>
+                  <div
+                    style={coloredSquareStyle(
+                      getPieColor(tooltipData.label, PieLabels)
+                    )}
+                  />
+                  {formatValue
+                    ? formatValue(tooltipData.value)
+                    : tooltipData.value}
+                </div>
+              </>
+            )}
+          </div>
+        </TooltipWithBounds>
+      )}
     </div>
   );
 };
@@ -284,16 +361,43 @@ type AnimatedPieProps<Datum> = ProvidedProps<Datum> & {
   getColor: (d: PieArcDatum<Datum>) => string;
   onClickDatum: (d: PieArcDatum<Datum>) => void;
   delay?: number;
+  height: number;
+  width: number;
+  tooltipData: { label: string; value: number } | undefined;
+  tooltipLeft: number | undefined;
+  tooltipTop: number | undefined;
+  tooltipOpen: boolean;
+  showTooltip: (args: {
+    tooltipData: { label: string; value: number; index: number };
+    tooltipLeft: number;
+    tooltipTop: number;
+  }) => void;
+  hideTooltip: () => void;
 };
 
-function AnimatedPie<Datum>({
+function AnimatedPie<Datum extends ExtendedDatum>({
   animate,
   arcs,
   path,
   getKey,
   getColor,
   onClickDatum,
-}: AnimatedPieProps<Datum>) {
+  showValues,
+  formatValue,
+  height,
+  width,
+  tooltipData,
+  tooltipLeft,
+  tooltipTop,
+  tooltipOpen,
+  showTooltip,
+  hideTooltip,
+  selectedSlice,
+}: AnimatedPieProps<Datum> & {
+  showValues?: boolean;
+  formatValue?: (value: number) => string;
+  selectedSlice: string | null;
+}) {
   const transitions = useTransition<PieArcDatum<Datum>, AnimatedStyles>(arcs, {
     from: animate ? fromLeaveTransition : enterUpdateTransition,
     enter: enterUpdateTransition,
@@ -301,36 +405,62 @@ function AnimatedPie<Datum>({
     leave: animate ? fromLeaveTransition : enterUpdateTransition,
     keys: getKey,
   });
+
   return transitions((props, arc, { key }) => {
     const [centroidX, centroidY] = path.centroid(arc);
     const hasSpaceForLabel = arc.endAngle - arc.startAngle >= 0.1;
+    const isSelected = arc.data.Label === selectedSlice;
 
     return (
-      <g key={key}>
-        <animated.path
-          d={interpolate(
-            [props.startAngle, props.endAngle],
-            (startAngle, endAngle) => path({ ...arc, startAngle, endAngle })
+      <>
+        <g key={key}>
+          <animated.path
+            d={interpolate(
+              [props.startAngle, props.endAngle],
+              (startAngle, endAngle) => path({ ...arc, startAngle, endAngle })
+            )}
+            fill={getColor(arc)}
+            onClick={() => onClickDatum(arc)}
+            onTouchStart={() => onClickDatum(arc)}
+            onMouseEnter={() => {
+              console.log({ arc });
+              showTooltip({
+                tooltipData: {
+                  label: arc.data.Label,
+                  value: arc.data.Value,
+                  index: arc.index,
+                },
+                tooltipTop: centroidY,
+                tooltipLeft: centroidX,
+              });
+            }}
+            onMouseLeave={hideTooltip}
+          />
+          {hasSpaceForLabel && (
+            <animated.g style={{ opacity: props.opacity }}>
+              <text
+                fill='white'
+                x={centroidX}
+                y={centroidY}
+                dy='.33em'
+                fontSize={9}
+                textAnchor='middle'
+                pointerEvents='none'>
+                {showValues
+                  ? formatValue
+                    ? `${arc.data.Label} (${formatValue(arc.data.Value as number)})`
+                    : `${arc.data.Label} (${arc.data.Value})`
+                  : arc.data.Label}
+                {isSelected
+                  ? `${arc.data.Label}: (${formatValue ? formatValue(arc.data.Value) : arc.data.Value})`
+                  : showValues
+                    ? arc.data.Label
+                    : ''}
+              </text>
+            </animated.g>
           )}
-          fill={getColor(arc)}
-          onClick={() => onClickDatum(arc)}
-          onTouchStart={() => onClickDatum(arc)}
-        />
-        {hasSpaceForLabel && (
-          <animated.g style={{ opacity: props.opacity }}>
-            <text
-              fill='white'
-              x={centroidX}
-              y={centroidY}
-              dy='.33em'
-              fontSize={9}
-              textAnchor='middle'
-              pointerEvents='none'>
-              {getKey(arc)}
-            </text>
-          </animated.g>
-        )}
-      </g>
+        </g>
+      </>
     );
   });
 }

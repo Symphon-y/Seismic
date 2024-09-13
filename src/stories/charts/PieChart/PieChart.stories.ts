@@ -8,6 +8,7 @@ import {
   PieChartMock,
   PieChartOuterMock,
 } from '../../../../charts/src/PieChart/PieChartMock';
+import { abbreviateNumbers } from '@/stories/utils/abbreviateNumbers';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
@@ -35,9 +36,9 @@ export const Primary: Story = {
     width: 500,
     height: 325,
     data: PieChartMock,
-    showOuterChart: true,
-    showInnerChart: true,
-    outerChartData: PieChartOuterMock,
+    showDonutChart: true,
+    showPieChart: true,
+    donutChartData: PieChartOuterMock,
     animate: true,
     margin: {
       top: 24,
@@ -45,7 +46,7 @@ export const Primary: Story = {
       bottom: 24,
       left: 24,
     },
-    innerColors: [
+    pieColors: [
       'rgba(59,130,246, 0.7)',
       'rgba(59,130,246, 0.6)',
       'rgba(59,130,246, 0.5)',
@@ -54,7 +55,7 @@ export const Primary: Story = {
       'rgba(59,130,246, 0.2)',
       'rgba(59,130,246, 0.1)',
     ],
-    outerColors: [
+    donutColors: [
       'rgba(59,130,246,1)',
       'rgba(59,130,246,0.8)',
       'rgba(59,130,246,0.6)',
@@ -62,5 +63,7 @@ export const Primary: Story = {
     ],
     showCard: true,
     legend: true,
+    showValues: true,
+    formatValue: abbreviateNumbers,
   },
 };

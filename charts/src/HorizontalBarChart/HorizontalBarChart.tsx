@@ -19,21 +19,21 @@ const barHeight = 32;
 const gapHeight = 4;
 const borderRadius = 4;
 const headerHeight = 32;
-const percentColumnWidth = 72;
 
 type HorizontalBarChartProps = {
   width: number;
   height: number;
   title?: string;
-  events?: boolean;
   data?: ChartValues;
-  columnTwo?: boolean;
   header?: string;
+  columnTwo?: boolean;
   columnTwoHeader?: string;
   columnTwoDataType?: HorizontalBarDataColumnType;
   showValues?: boolean;
   showCard?: boolean;
   sort?: 'Ascending' | 'Descending' | null;
+  formatValue?: (value: number) => string;
+  events?: boolean;
 };
 
 const customPaper = {
@@ -57,7 +57,13 @@ export const HorizontalBarChart = ({
   showValues = false,
   showCard = true,
   sort = null,
+  formatValue,
 }: HorizontalBarChartProps) => {
+  let percentColumnWidth = 32;
+  if (columnTwoDataType !== 'Count') {
+    percentColumnWidth = 64;
+  }
+
   const additionalHeightFactor = data.length > 5 ? data.length - 5 : 0;
   const actualHeight =
     height + additionalHeightFactor * (barHeight + gapHeight);
@@ -156,7 +162,9 @@ export const HorizontalBarChart = ({
           // Check if the columnTwoDataType is 'Count'
           if (columnTwoDataType === 'Count') {
             // If true, set columnTwoValue to the raw value of the data point (d)
-            columnTwoValue = getValue(d);
+            columnTwoValue = formatValue
+              ? formatValue(getValue(d))
+              : getValue(d);
             // Check if the columnTwoDataType is 'PercentageOfTotal'
           } else if (columnTwoDataType === 'PercentageOfTotal') {
             // If true, calculate the percentage of the data point's value (d) as part of the total value.
@@ -178,7 +186,9 @@ export const HorizontalBarChart = ({
 
           // If showValues is true, display raw value with percentage
           if (columnTwoDataType !== 'Count' && showValues) {
-            columnTwoValue = `${getValue(d)} (${columnTwoValue})`;
+            columnTwoValue = formatValue
+              ? `${formatValue(getValue(d))} (${columnTwoValue})`
+              : `${getValue(d)} (${columnTwoValue})`;
           }
 
           return (
@@ -218,7 +228,11 @@ export const HorizontalBarChart = ({
                   fontWeight='regular'
                   lineHeight={lineHeight}
                   textAnchor='end'>
-                  {columnTwoValue}
+                  {typeof columnTwoValue === 'number'
+                    ? formatValue
+                      ? formatValue(columnTwoValue)
+                      : columnTwoValue
+                    : columnTwoValue}
                 </Text>
               )}
             </Group>

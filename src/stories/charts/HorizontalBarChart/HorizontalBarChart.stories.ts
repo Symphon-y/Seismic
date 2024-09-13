@@ -1,3 +1,4 @@
+import { abbreviateNumbers } from '@/stories/utils/abbreviateNumbers';
 import {
   HorizontalbarChartLongitudinalityMock,
   HorizontalBarChartMock,
@@ -36,9 +37,10 @@ export const Primary: Story = {
     columnTwoHeader: 'Percentage',
     columnTwoDataType: 'PercentageOfTotal',
     showValues: true,
-    events: false,
     showCard: true,
     sort: null,
+    formatValue: abbreviateNumbers,
+    events: false,
   },
 };
 
@@ -55,5 +57,6 @@ export const Longitudinality: Story = {
     showValues: true,
     events: false,
     showCard: true,
+    formatValue: abbreviateNumbers,
   },
 };
